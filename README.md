@@ -19,3 +19,9 @@ To check the server is running:
 
     GET /messages (retrieve all messages)
     POST /messages (post new message)
+
+ # Coding
+
+ To format code according to Go standards:
+
+    go fmt
