@@ -8,12 +8,17 @@ Then install, build and run the project:
 
     git clone https://github.com/todsul/chat-api-golang.git
     cd chat-api-golang
-    go build
+    go install
     chat-api-golang
 
 To check the server is running:
 
     http://localhost:8080/messages
+
+It's also worth reading the following:
+
+    https://golang.org/doc/code.html
+    https://golang.org/doc/effective_go.html
 
 ## API
 
