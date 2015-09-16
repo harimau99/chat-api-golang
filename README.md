@@ -14,3 +14,8 @@ Then install, build and run the project:
 To check the server is running:
 
     http://localhost:8080/messages
+
+## API
+
+    GET /messages (retrieve all messages)
+    POST /messages (post new messages)
