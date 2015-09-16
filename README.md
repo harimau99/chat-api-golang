@@ -18,4 +18,4 @@ To check the server is running:
 ## API
 
     GET /messages (retrieve all messages)
-    POST /messages (post new messages)
+    POST /messages (post new message)
