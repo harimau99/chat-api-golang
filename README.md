@@ -20,7 +20,7 @@ To check the server is running:
     GET /messages (retrieve all messages)
     POST /messages (post new message)
 
- # Coding
+## Coding
 
  To format code according to Go standards:
 
