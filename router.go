@@ -11,7 +11,7 @@ func Router() *httprouter.Router {
 
 	for _, route := range routes {
 		// Wrap handler in logger function to log every request
-        handler := Logger(route.Function, route.Name)
+		handler := Logger(route.Function, route.Name)
 
 		// Pass the wrapped handler to the router
 		router.Handle(route.Method, route.Pattern, handler)
