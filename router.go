@@ -10,7 +10,11 @@ func Router() *httprouter.Router {
 	router := httprouter.New()
 
 	for _, route := range routes {
-		router.Handle(route.Method, route.Pattern, route.Function)
+		// Wrap handler in logger function to log every request
+        handler := Logger(route.Function, route.Name)
+
+		// Pass the wrapped handler to the router
+		router.Handle(route.Method, route.Pattern, handler)
 	}
 
 	return router
