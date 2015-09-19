@@ -10,10 +10,7 @@ func Router() *httprouter.Router {
 	router := httprouter.New()
 
 	for _, route := range routes {
-		var handler httprouter.Handle
-
-		handler = route.Function
-		router.Handle(route.Method, route.Pattern, handler)
+		router.Handle(route.Method, route.Pattern, route.Function)
 	}
 
 	return router
