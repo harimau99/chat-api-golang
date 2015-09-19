@@ -20,11 +20,7 @@ type Messages []Message
 // Maintaining CRUD naming convention for model functions
 // TODO: abstract database code from here (maybe)
 
-func CreateMessage(text string) *Message {
-	message := new(Message)
-	message.Created = time.Now()
-	message.Text = text
-
+func CreateMessage(message Message) {
 	// Get a mysql connection
 	// To scan mysql.DateTime into time.Time, we need ?parseTime=true
 	db, err := sql.Open("mysql", "root:@/chat")
@@ -56,8 +52,6 @@ func CreateMessage(text string) *Message {
 		"-create",
 		lastId,
 	)
-
-	return message
 }
 
 func RetrieveMessages() Messages {

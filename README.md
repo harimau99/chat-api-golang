@@ -15,6 +15,7 @@ It's worth reading this about Golang:
 
     https://golang.org/doc/code.html
     https://golang.org/doc/effective_go.html
+    https://gobyexample.com/
 
 For the mysql database
 
