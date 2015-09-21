@@ -1,14 +1,13 @@
 package main
 
-import (
-	"log"
-	"net/http"
-)
+import ()
 
 func main() {
-	// See routes.go for a list of specified routes
-	// See handlers.go for a list of controllers
-	router := Router()
+	// We must setup the database only once for efficiency with connections
+	// See this page for information: http://go-database-sql.org/accessing.html
+	db := Database()
 
-	log.Fatal(http.ListenAndServe(":8080", router))
+	// See routes.go for a list of specified routes
+	// See handlers.go for a list of handlers/controllers
+	Router(db)
 }

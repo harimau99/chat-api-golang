@@ -52,7 +52,6 @@ To post a message:
 
 ## TODO
 
-* Write the code to create and build the database
 * Create a separate database.go file
 * Manage database connections centrally
 * Create a separate logger for the database and wrap the db functions
