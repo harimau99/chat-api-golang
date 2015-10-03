@@ -17,8 +17,8 @@ func Router(db *sql.DB) {
 	handler := Handler{db: db}
 
 	// We wrap the handler with a logger to output to console
-	router.Handle("GET", "/messages", HandleLogger(handler.MessagesGet))
-	router.Handle("POST", "/messages", HandleLogger(handler.MessagesPost))
+	router.Handle("GET", "/messages", handler.Process(handler.MessagesGet))
+	router.Handle("POST", "/messages", handler.Process(handler.MessagesPost))
 
 	log.Fatal(http.ListenAndServe(":8080", router))
 }

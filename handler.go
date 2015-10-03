@@ -9,7 +9,6 @@ import (
 	"net/http"
 	"time"
 
-	_ "github.com/go-sql-driver/mysql"
 	"github.com/julienschmidt/httprouter"
 )
 
@@ -17,38 +16,34 @@ type Handler struct {
 	db *sql.DB
 }
 
+// Generic method to handle common tasks such as logging
+func (h *Handler) Process(handle httprouter.Handle) httprouter.Handle {
+	return func(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+		// Start the stopwatch for logging the request
+		start := time.Now()
+
+		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+
+		// Call the handler and pass the original parameters
+		handle(w, r, p)
+
+		// Print the log to the console
+		log.Printf(
+			"%-6s%-20s%-20s",
+			r.Method,
+			r.RequestURI,
+			time.Since(start),
+		)
+	}
+}
+
 // GET "/messages"
 func (h *Handler) MessagesGet(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
-	var messages Messages
-
-	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-
-	// Get the Messages from the database
-	// Note: db.Query() opens and holds a connection until rows.Close()
-	rows, err := h.db.Query("SELECT * FROM message ORDER BY created DESC")
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer rows.Close()
-
-	// Iterate through query rows
-	for rows.Next() {
-		message := new(Message)
-
-		// Scan gets the columns one row at a time
-		err := rows.Scan(&message.Text, &message.Created)
-		if err != nil {
-			log.Fatal(err)
-		}
-
-		// Add the message to the Messages array
-		messages = append(messages, *message)
-	}
-
-	err = rows.Err()
-	if err != nil {
-		log.Fatal(err)
-	}
+	messages, err := MessagesRetrieve(h.db)
+    if err != nil {
+        http.Error(w, http.StatusText(500), 500)
+        return
+    }
 
 	w.WriteHeader(http.StatusOK)
 
@@ -59,10 +54,6 @@ func (h *Handler) MessagesGet(w http.ResponseWriter, r *http.Request, p httprout
 
 // POST "/messages"
 func (h *Handler) MessagesPost(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
-	var message Message
-
-	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-
 	// Read body of request, but limit input to save server resources
 	body, err := ioutil.ReadAll(io.LimitReader(r.Body, 1048576))
 	if err != nil {
@@ -73,6 +64,7 @@ func (h *Handler) MessagesPost(w http.ResponseWriter, r *http.Request, p httprou
 	}
 
 	// Unmarshal the json body into a Message struct
+	var message Message
 	if err := json.Unmarshal(body, &message); err != nil {
 		// If error, return an HTTP status 422: Unprocessable entity
 		w.WriteHeader(422)
@@ -82,17 +74,11 @@ func (h *Handler) MessagesPost(w http.ResponseWriter, r *http.Request, p httprou
 		}
 	}
 
-	// Create the message in the database
-	stmt, err := h.db.Prepare("INSERT INTO message(created, text) VALUES(?, ?)")
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	// Execute the statement with the data
-	_, err = stmt.Exec(time.Now(), message.Text)
-	if err != nil {
-		log.Fatal(err)
-	}
+	err = message.Create(h.db)
+    if err != nil {
+        http.Error(w, http.StatusText(500), 500)
+        return
+    }
 
 	w.WriteHeader(http.StatusCreated)
 }
