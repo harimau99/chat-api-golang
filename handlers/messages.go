@@ -16,7 +16,7 @@ import (
 func (h *Handler) MessagesGet(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 	messages, err := h.DB.MessagesRetrieve()
     if err != nil {
-        http.Error(w, http.StatusText(500), 500)
+        http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
         return
     }
 

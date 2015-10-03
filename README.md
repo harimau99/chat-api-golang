@@ -24,6 +24,10 @@ For the mysql database
       `created` datetime DEFAULT NULL
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+## Testing
+
+    go test ./tests
+
 ## API
 
     GET /messages (retrieve all messages)
