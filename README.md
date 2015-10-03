@@ -8,14 +8,9 @@ Then install, build and run the project:
 
     git clone https://github.com/todsul/chat-api-golang.git
     cd chat-api-golang
-    go install
+    go get
+    go install .
     chat-api-golang
-
-It's worth reading this about Golang:
-
-    https://golang.org/doc/code.html
-    https://golang.org/doc/effective_go.html
-    https://gobyexample.com/
 
 For the mysql database
 
@@ -55,3 +50,9 @@ To post a message:
 * Create a separate database.go file
 * Manage database connections centrally
 * Create a separate logger for the database and wrap the db functions
+
+## Reading
+
+* https://golang.org/doc/code.html
+* https://golang.org/doc/effective_go.html
+* https://gobyexample.com/
