@@ -47,9 +47,9 @@ To post a message:
 
 ## TODO
 
-* Create a separate database.go file
-* Manage database connections centrally
-* Create a separate logger for the database and wrap the db functions
+* Move database operations to models (easier unit testing, simpler handlers, etc)
+* Re-do handlers with centralized error handling and logging
+* Write unit tests
 
 ## Reading
 
