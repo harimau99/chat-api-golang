@@ -1,45 +1,20 @@
-package main
+package handlers
 
 import (
-	"database/sql"
-	"encoding/json"
+    "encoding/json"
 	"io"
 	"io/ioutil"
 	"log"
 	"net/http"
-	"time"
 
-	"github.com/julienschmidt/httprouter"
+    "github.com/julienschmidt/httprouter"
+
+    "github.com/todsul/chat-api-golang/models"
 )
-
-type Handler struct {
-	db *sql.DB
-}
-
-// Generic method to handle common tasks such as logging
-func (h *Handler) Process(handle httprouter.Handle) httprouter.Handle {
-	return func(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
-		// Start the stopwatch for logging the request
-		start := time.Now()
-
-		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-
-		// Call the handler and pass the original parameters
-		handle(w, r, p)
-
-		// Print the log to the console
-		log.Printf(
-			"%-6s%-20s%-20s",
-			r.Method,
-			r.RequestURI,
-			time.Since(start),
-		)
-	}
-}
 
 // GET "/messages"
 func (h *Handler) MessagesGet(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
-	messages, err := MessagesRetrieve(h.db)
+	messages, err := h.DB.MessagesRetrieve()
     if err != nil {
         http.Error(w, http.StatusText(500), 500)
         return
@@ -64,19 +39,20 @@ func (h *Handler) MessagesPost(w http.ResponseWriter, r *http.Request, p httprou
 	}
 
 	// Unmarshal the json body into a Message struct
-	var message Message
+	var message models.Message
 	if err := json.Unmarshal(body, &message); err != nil {
-		// If error, return an HTTP status 422: Unprocessable entity
-		w.WriteHeader(422)
+		// If error, return an HTTP StatusNotAcceptable
+		w.WriteHeader(http.StatusNotAcceptable)
 
 		if err := json.NewEncoder(w).Encode(err); err != nil {
 			log.Fatal(err)
 		}
+		return
 	}
 
-	err = message.Create(h.db)
-    if err != nil {
-        http.Error(w, http.StatusText(500), 500)
+    // Create the message on the database
+    if err = h.DB.MessageCreate(message.Text); err != nil {
+        http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
         return
     }
 
